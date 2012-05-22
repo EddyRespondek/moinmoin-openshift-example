@@ -1,0 +1,29 @@
+#!/bin/bash
+# This is a simple build script and will be executed on your CI system if 
+# available.  Otherwise it will execute while your application is stopped
+# before the deploy step.  This script gets executed directly, so it
+# could be python, php, ruby, etc.
+
+# Activate VirtualEnv in order to use the correct libraries
+source $OPENSHIFT_GEAR_DIR/virtenv/bin/activate
+
+DATA_DIR="${OPENSHIFT_DATA_DIR}data"
+UNDERLAY_DIR="${OPENSHIFT_DATA_DIR}underlay"
+PLUGIN_DIR="${DATA_DIR}/plugin"
+REPO_PLUGIN_DIR="${OPENSHIFT_REPO_DIR}wsgi/plugin"
+
+MOIN_SHARE="${OPENSHIFT_GEAR_DIR}virtenv/lib/python*/site-packages/moin-*-py*.egg/share/moin"
+
+if [ ! -d $DATA_DIR ]; then
+    echo "Copying ${MOIN_SHARE}/data to ${OPENSHIFT_DATA_DIR}"
+    cp -rf $MOIN_SHARE/data $OPENSHIFT_DATA_DIR
+fi
+
+if [ ! -d $UNDERLAY_DIR ]; then
+    echo "Copying ${MOIN_SHARE}/underlay to ${OPENSHIFT_DATA_DIR}"
+    cp -rf $MOIN_SHARE/underlay $OPENSHIFT_DATA_DIR
+fi 
+
+echo "Replacing ${PLUGIN_DIR} contents"
+rm -rf $PLUGIN_DIR
+mv -f $REPO_PLUGIN_DIR $DATA_DIR

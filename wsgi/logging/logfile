@@ -1,0 +1,29 @@
+[DEFAULT]
+# Default loglevel, to adjust verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL
+loglevel=INFO
+
+[loggers]
+keys=root
+
+[handlers]
+keys=logfile
+
+[formatters]
+keys=logfile
+
+[logger_root]
+level=%(loglevel)s
+handlers=logfile
+
+[handler_logfile]
+class=logging.handlers.TimedRotatingFileHandler
+class.suffix = "-%Y%m%d-%H%M%S"
+formatter=logfile
+level=%(loglevel)s
+args=(os.environ['OPENSHIFT_LOG_DIR'] + '/moin.log', 'midnight', 1)
+
+[formatter_logfile]
+format=%(levelname)s %(asctime)s %(name)s:%(lineno)d %(message)s
+datefmt=
+class=logging.Formatter
+
